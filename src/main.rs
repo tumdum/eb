@@ -13,12 +13,7 @@ use std::{
 	time::Instant,
 };
 
-fn main() -> eb::ExecutionResult {
-	#[cfg(feature = "simple_logger")]
-	simple_logger::init().unwrap();
-
-	let max_n: u32 = 10;
-
+fn get_command() -> eb::Result<Command> {
 	let matches = App::new(env!("CARGO_PKG_NAME"))
 		.about(env!("CARGO_PKG_DESCRIPTION"))
 		.version(env!("CARGO_PKG_VERSION"))
@@ -26,7 +21,7 @@ fn main() -> eb::ExecutionResult {
 		.setting(AppSettings::AllowExternalSubcommands)
 		.get_matches();
 
-	let mut command: Command = match matches.subcommand() {
+	match matches.subcommand() {
 		(name, Some(matches)) => {
 			let mut command = Command::new(name);
 			let args: Vec<&str> = matches.values_of("").map_or(Vec::new(), Iterator::collect);
@@ -39,7 +34,16 @@ fn main() -> eb::ExecutionResult {
 		}
 		_ => None,
 	}
-	.ok_or(eb::Error::NoCommandGiven)?;
+	.ok_or(eb::Error::NoCommandGiven)
+}
+
+fn main() -> eb::ExecutionResult {
+	#[cfg(feature = "simple_logger")]
+	simple_logger::init().unwrap();
+
+	let max_n: u32 = 10;
+
+	let mut command: Command = get_command()?;
 
 	let mut iterations: u32 = 0;
 	let mut slot_time: Option<SlotTime> = None;
