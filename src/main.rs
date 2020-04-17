@@ -69,10 +69,12 @@ fn main() -> eb::ExecutionResult {
 				info!("Child exited with status 0; finished.");
 				break Ok(());
 			}
+			#[cfg(feature = "log")]
 			Some(code) => {
-				#[cfg(feature = "log")]
 				info!("Child exited with status {}", code);
 			}
+			#[cfg(not(feature = "log"))]
+			Some(_) => {}
 			None => {
 				#[cfg(feature = "log")]
 				error!("Child terminated by signal");
