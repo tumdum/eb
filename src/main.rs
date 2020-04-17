@@ -4,6 +4,7 @@ use eb::SlotTime;
 use clap::{App, AppSettings};
 use rand::distributions::{Distribution, Uniform};
 
+#[cfg(feature = "log")]
 use log::{debug, error, info, trace};
 
 use core::time::Duration;
@@ -49,9 +50,11 @@ fn main() -> eb::ExecutionResult {
 	let mut slot_time: Option<SlotTime> = None;
 	let mut rng = rand::thread_rng();
 
+	#[cfg(feature = "log")]
 	trace!("Beginning iteration...");
 
 	loop {
+		#[cfg(feature = "log")]
 		trace!("Starting iteration {}", iterations);
 
 		let start: Instant = Instant::now();
@@ -62,13 +65,16 @@ fn main() -> eb::ExecutionResult {
 
 		match status.code() {
 			Some(0) => {
+				#[cfg(feature = "log")]
 				info!("Child exited with status 0; finished.");
 				break Ok(());
 			}
 			Some(code) => {
+				#[cfg(feature = "log")]
 				info!("Child exited with status {}", code);
 			}
 			None => {
+				#[cfg(feature = "log")]
 				error!("Child terminated by signal");
 				break Err(eb::Error::ChildProcessTerminatedWithSignal);
 			}
@@ -91,6 +97,7 @@ fn main() -> eb::ExecutionResult {
 			None => Duration::new(0, 0),
 		};
 
+		#[cfg(feature = "log")]
 		debug!("Sleeping for {}s", delay.as_secs_f64());
 
 		sleep(delay);
