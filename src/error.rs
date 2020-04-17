@@ -1,6 +1,6 @@
 use core::{
 	fmt::{self, Debug, Display, Formatter},
-	result
+	result,
 };
 
 #[derive(PartialEq)]
@@ -32,3 +32,5 @@ impl Display for Error {
 impl std::error::Error for Error {}
 
 pub type Result<T> = result::Result<T, Error>;
+
+pub type ExecutionResult = Result<()>;
